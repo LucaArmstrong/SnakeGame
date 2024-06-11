@@ -1,26 +1,16 @@
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.awt.event.KeyListener;
 import java.util.Random;
 
-class Position { //Position is a class for storing and x and y pair representing some position on the game grid
-    int x;
-    int y;
-
-    public Position(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
 public class Snake {
-
     public ArrayList<Position> snakePositions = new ArrayList<Position>();
 
     private String direction;
-    private int snakeLength;
+    public int snakeLength;
     public Position snakeHead, pelletPosition;
 
-    public boolean gameHasEnded;
+    public boolean gameHasStarted, gameHasEnded;
     public int WIDTH, HEIGHT, AREA;
 
     public Snake(int width, int height) {
@@ -29,16 +19,19 @@ public class Snake {
         this.HEIGHT = height;
         this.AREA = width * height;
 
-        direction = "up";
+        direction = "start";
         snakeLength = 0;
+        gameHasStarted = false;
         gameHasEnded = false;
 
-        snakeHead = new Position(WIDTH/2, HEIGHT/2);    // set the snake head to the middle of the grid initially
+        snakeHead = new Position(WIDTH / 2, HEIGHT / 2);    // set the snake head to the middle of the grid initially
         snakePositions.add(snakeHead);
         pelletPosition = getRandomEmptyPosition();  // initialise pellet to some random position
     }
 
     public void doIteration() {
+        if (!gameHasStarted) return;
+
         // in here we iterate the snake once (doing one iteration of the game)
         doMovement();
 
@@ -52,7 +45,7 @@ public class Snake {
         Position newHead = getNewSnakeHead();
 
         // check if snake has collided with itself
-        if (snakePositions.contains(newHead)) {
+        if (isSnakePosition(newHead)) {
             gameHasEnded = true;
             return;
         }
@@ -62,7 +55,7 @@ public class Snake {
         snakeHead = newHead;
 
         // check if pellet has been eaten
-        if (pelletPosition == snakeHead) {
+        if (pelletPosition.equals(snakeHead)) {
             snakeLength++;
             pelletPosition = getRandomEmptyPosition();  // get a new random pellet position
         } else {
@@ -72,16 +65,16 @@ public class Snake {
     }
 
     public Position getNewSnakeHead() {
-        Position newHead = snakeHead;
+        Position newHead = new Position(snakeHead.x, snakeHead.y);
 
         // get the position of the new head based on the direction the snake is facing
         switch (direction) {
             case "up":
-                newHead.y = (snakeHead.y == 0) ? HEIGHT - 1 : snakeHead.y - 1;
+                newHead.y = (snakeHead.y == HEIGHT - 1) ? 0 : snakeHead.y + 1;
                 break;
 
             case "down":
-                newHead.y = (snakeHead.y == HEIGHT - 1) ? 0 : snakeHead.y + 1;
+                newHead.y = (snakeHead.y == 0) ? HEIGHT - 1 : snakeHead.y - 1;
                 break;
 
             case "left":
@@ -90,6 +83,10 @@ public class Snake {
 
             case "right":
                 newHead.x = (snakeHead.x == WIDTH - 1) ? 0 : snakeHead.x + 1;
+                break;
+
+            case "start":
+                // initially, there is no direction so do nothing
                 break;
 
             default:
@@ -110,20 +107,53 @@ public class Snake {
         int x, y;
         int emptyCells = 0;
 
-        for (x = 0; x < WIDTH; x++) {
-            for (y = 0; y < HEIGHT; y++) {
-                if (emptyCells == randomCellNumber) return new Position(x, y);
-                if (!snakePositions.contains(new Position(x, y))) {
+        if (randomCellNumber == 0) return new Position(0, 0);
+
+        for (y = 0; y < HEIGHT; y++) {
+            for (x = 0; x < WIDTH; x++) {
+                if (!isSnakePosition(new Position(x, y))) {
                     emptyCells++;
                 }
+                if (emptyCells == randomCellNumber) return new Position(x, y);
             }
         }
 
         return new Position(0, 0);
     }
 
-    public static void setDirection() {
-        // get direction
+    private boolean isSnakePosition(Position pos) {
+        for (Position snakePos : snakePositions) {
+            if (pos.equals(snakePos)) return true;
+        }
+        return false;
+    }
 
+    public void setDirection(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_W:
+                if (direction.equals("down") && snakeLength > 0) break;
+                direction = "up";
+                break;
+
+            case KeyEvent.VK_S:
+                if (direction.equals("up") && snakeLength > 0) break;
+                direction = "down";
+                break;
+
+            case KeyEvent.VK_A:
+                if (direction.equals("right") && snakeLength > 0) break;
+                direction = "left";
+                break;
+
+            case KeyEvent.VK_D:
+                if (direction.equals("left") && snakeLength > 0) break;
+                direction = "right";
+                break;
+
+            default:
+                System.out.println("Invalid key pressed");
+        }
+
+        if (!direction.equals("start")) gameHasStarted = true;
     }
 }

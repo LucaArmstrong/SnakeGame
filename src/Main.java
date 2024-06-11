@@ -1,14 +1,14 @@
 public class Main {
-    private Snake snake = new Snake(30, 20);
-    private Renderer renderer = new Renderer(snake, 1500, 750);
+    private static final Snake snake = new Snake(45, 22);
+    private static final Renderer renderer = new Renderer(snake, 1500, 750);
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         runGame();
     }
 
-    public void runGame() {
+    public static void runGame() {
         // in here we have a loop that iterates over the snake iterate method
-        int deltaTimeMs = 50;
+        int deltaTimeMs = 125;
         renderer.renderFrame();
 
         while (!snake.gameHasEnded) {
