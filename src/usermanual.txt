@@ -1,0 +1,48 @@
+Snake Game User Manual
+Overview
+Welcome to the Snake Game. The objective of the game is to eat as many pellets as possible whilst avoiding
+collision with itself
+
+Game Controls
+The snake is controlled using these keys:
+
+W: Move Up
+S: Move Down
+A: Move Left
+D: Move Right
+How to Play
+
+Running the game:
+When you start the game, the snake will be positioned in the center of the grid.
+
+First Move: The game begins when you press any of the control keys (W, A, S, D).
+Moving the Snake
+Press the WASD keys to change the snake's direction.
+The snake will move continuously in the direction it is currently facing.
+The snake cannot reverse direction directly (e.g., moving up immediately after moving down is not allowed).
+
+Eating Pellets
+Pellets appear randomly on the grid.
+Move the snake to the pellet's position to eat it.
+Eating a pellet increases the snake's length by one unit.
+
+Ending the Game
+Winning: The game ends if the snake fills the entire grid.
+Losing: The game ends if the snake collides with itself.
+
+Game Elements
+Snake
+
+Head: The front of the snake, which determines its direction.
+
+Body: The rest of the snake, which follows the head.
+
+Pellet
+
+A randomly placed item that the snake must eat to grow longer.
+
+Grid
+
+The playing field where the snake moves.
+
+The size of the grid is defined by the WIDTH and HEIGHT parameters set during game initialization.

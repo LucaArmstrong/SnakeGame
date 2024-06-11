@@ -1,0 +1,43 @@
+Main loop:
+* will call the subroutines gathering all of them and using them in a single method
+
+Snake representation:
+* Store the grid in a 1D array of length area where area = height * width, basically the number
+
+Grid for the game:
+* bool snakeGrid[area];
+
+
+Graphics Method:
+
+
+
+Movement of the Snake Method:
+* We will pass through the doIteration method which will force the snake to move grids every certain amount of time.
+* If input w = index + 20, s - 20, a -1, d+1 "This is just an exmaple of how the snake would move"
+- if the snake "eats" a pellet then the snake grows in size by 1
+
+
+Snake eating pellet method:
+* Pass through the POSITION of the snake
+* A while loop when snake head coordinates = to the coordinates of the pellet -> increase the size snake +1
+* As the snake = snake + 1 increase the score and speed of snake.
+
+Snake moving method:
+* pass through the DOITERATION method
+* With each iteration the snake moves up a coordinate
+* Then each iteration, the snake will be moved forward by one in the same direction it is currently facing
+while loops checks for movement, if there is no movement, the back square of the snake will be truncuated
+* and a new square for the head of the snake would placed in the cordinate above where it currently is,
+and if there is movement, the new head of the square would be placed in the cordinate into the direction
+of where the arrow is
+
+
+Position method:
+* Is a class for storing and x and y pair representing some position on the game grid
+
+
+doIteration method?
+- need to store a direction the snake is currently moving in
+- need to get the input for any new direction
+-

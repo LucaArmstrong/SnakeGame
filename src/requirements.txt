@@ -1,0 +1,35 @@
+Snake Game Requirements
+
+User requirements:
+- Arrow keys or WASD directing the movement of the snake
+- To see a score
+- To die when the snake hits itself
+- to loop to the other side of the grid if the side is hit
+- To increase the size of snake after eating food collected
+- For speed to increase as the game progresses
+- The snake cannot reverse direction directly unless it is at a length of work (e.g., moving up immediately after moving down is not allowed)
+- Multiple game modes, classical, where the rules are those as above.
+-
+
+Feasability study:
+Developing a Snake game in Java with a team of three programmers is feasible within a three-week timeline.
+The project will be made using Java's libraries and cross-platform capabilities.The team, somewhat
+proficient in Java, will undertake a structured plan that is typically found in waterfall methodology,
+Analysis, were the team will do a feasibility study and requirements, Design, were a rough structure of
+the program is outlined, Implementation, were the team will work on the code, testing, were the program
+will be checked for any errors or be made more efficient, documentation, were user guides and instructions
+are made, and evaluation, were the project is checked with client to see whether all requirements are met
+
+
+Functional requirements:
+- The program should listen for certain key inputs e.g. wasd for snake movement
+- the program should have an array to store the grid positions of the snake
+- Randomly generate pallets acrros the array.
+
+
+
+
+
+
+
+
