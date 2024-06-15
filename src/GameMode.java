@@ -12,28 +12,37 @@ public class GameMode {
     public final int topMargin, topPadding, sidePadding;
     protected boolean gameIsPaused;
     protected JButton restartButton, pauseButton;
+    protected GamePanel gamePanel;
 
-    public GameMode(DrawingPanel drawingPanel) {
+    public GameMode(int widthPixels, int heightPixels) {
         // initialise the component dimensions
         // need one cell length at the top as padding
         // also on the grid, need half a cell's length of margin all the way round for
         // a more aesthetic transition between the grid and the side of the frame
-        this.cellLength = drawingPanel.widthPixels / (WIDTH + 1);
-        this.gridWidthPixels = drawingPanel.widthPixels;
+        this.cellLength = widthPixels / (WIDTH + 1);
+        this.gridWidthPixels = widthPixels;
         this.gridHeightPixels = cellLength * (HEIGHT + 1);
 
         this.topMargin = (int)(cellLength * 1.25);
         this.topPadding = (int)(cellLength * 0.5);
-        this.sidePadding = (drawingPanel.widthPixels - (cellLength * (WIDTH + 1))) / 2;
+        this.sidePadding = (widthPixels - (cellLength * (WIDTH + 1))) / 2;
 
         this.gameIsPaused = false;
 
+        restartButton = new JButton("Restart");
+        pauseButton = new JButton("Pause");
         addButtonListeners();
+    }
+
+    // to avoid a circular dependency
+    public void setGamePanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
     }
 
     private void addButtonListeners() {
         restartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                gameIsPaused = false;
                 runGame();
             }
         });
@@ -44,6 +53,8 @@ public class GameMode {
             }
         });
     }
+
+
 
     public void drawGameMode(Graphics2D g2d) {
 

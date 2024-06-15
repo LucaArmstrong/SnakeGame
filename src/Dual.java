@@ -6,20 +6,18 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 public class Dual extends GameMode {
-
-    private final  DrawingPanel drawingPanel;
-    private final int halfGridWidth;
     private final int rightGridStart;
     private Snake snake1, snake2;
     private JLabel scoreLabel1, scoreLabel2;
 
 
-    public Dual(DrawingPanel drawingPanel) {
-        super(drawingPanel);
+    public Dual(int widthPixels, int heightPixels) {
+        super(widthPixels, heightPixels);
 
-        this.drawingPanel = drawingPanel;
-        this.halfGridWidth = cellLength * HALF_WIDTH;
+        int halfGridWidth = cellLength * HALF_WIDTH;
         this.rightGridStart = sidePadding + halfGridWidth + cellLength;
+
+        addGameComponents();
     }
 
     public void runGame() {
@@ -29,7 +27,7 @@ public class Dual extends GameMode {
 
         // game loop
         while (!snake1.gameHasEnded && !snake2.gameHasEnded && !gameIsPaused) {
-            drawingPanel.renderObjects();
+            gamePanel.renderGame();
             snake1.doIteration();
             snake2.doIteration();
 
@@ -96,31 +94,36 @@ public class Dual extends GameMode {
 
         drawPellet(g2d, snake1.pelletPosition, "left");
         drawPellet(g2d, snake2.pelletPosition, "right");
+
+        drawSnake(g2d, snake1, "left");
+        drawSnake(g2d, snake2, "left");
     }
 
     @Override
     protected void addGameComponents() {
+        gamePanel.removeAll();
+
         JLabel scoreLabel1 = new JLabel();
         scoreLabel1.setForeground(Color.BLACK);
         scoreLabel1.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(scoreLabel1);
+        gamePanel.add(scoreLabel1);
         this.scoreLabel1 = scoreLabel1;
 
         JLabel scoreLabel2 = new JLabel();
         scoreLabel2.setForeground(Color.BLACK);
         scoreLabel2.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(scoreLabel2);
+        gamePanel.add(scoreLabel2);
         this.scoreLabel2 = scoreLabel2;
 
         JButton restartButton = new JButton("Restart");
         restartButton.setForeground(Color.WHITE);
         restartButton.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(restartButton);
+        gamePanel.add(restartButton);
 
         JButton pauseButton = new JButton("Pause");
         pauseButton.setForeground(Color.WHITE);
         pauseButton.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(pauseButton);
+        gamePanel.add(pauseButton);
     }
 
     @Override

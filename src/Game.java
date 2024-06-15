@@ -2,17 +2,9 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 
-enum GameState {
-    GAME_MENU,
-    CLASSICAL,
-    DUAL
-}
 
 /*
 * Starting on the game menu -> rendering all the buttons for each gamemode and game options i.e. speed and wall mechanics
@@ -26,67 +18,83 @@ public class Game {
     public static final int FULL_WIDTH = 45;
     public static final int HALF_WIDTH = 22;
     public static final int HEIGHT = 22;
+    public static int widthPixels, heightPixels;
 
     // game variables
-    public static GameState gameState;
     public static GameMode gameMode;
     private static boolean wallMechanics;
     private static double snakeDeltaTimeMs;
 
-    private static MyFrame frame;
-    private static DrawingPanel drawingPanel;
+    private static CardLayout cardLayout;
+    private static JPanel mainPanel;
+    public static GameFrame frame;
+    private static GamePanel gamePanel;
+    private static MenuPanel menuPanel;
+
     private Snake snake;
 
     public Game() {
-        gameState = GameState.GAME_MENU;
+        frame = new GameFrame();
+        widthPixels = frame.getWidth();
+        heightPixels = frame.getHeight();
 
-        frame = new MyFrame();
+        gameMode = new GameMode(widthPixels, heightPixels);
         frame.addKeyListener(gameMode);
-        drawingPanel = new DrawingPanel(this, frame.getFrameWidth(), frame.getFrameHeight());
+
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+
+        menuPanel = new MenuPanel();
+        gamePanel = new GamePanel(gameMode);
+
+        gameMode.setGamePanel(gamePanel);
+
+        mainPanel.add(menuPanel, "menu");
+        mainPanel.add(gamePanel, "game");
+
+        displayGameMenu();
     }
 
-    public static void doGameMenu() {
-        drawingPanel.removeAll();
-        frame.setBackground(Color.BLACK);
-
+    public static void displayGameMenu() {
         JLabel title = new JLabel("Snake Game");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(title);
+        title.setVisible(true);
+        menuPanel.add(title);
 
         JButton classical = new JButton("Classical Mode");
         classical.setForeground(Color.WHITE);
         classical.setFont(new Font("Calibri", Font.BOLD, 30));
-        drawingPanel.add(classical);
+        menuPanel.add(classical);
 
         JButton dual = new JButton("Dual Mode");
         dual.setForeground(Color.WHITE);
         dual.setFont(new Font("Calibri", Font.BOLD, 30));
-        drawingPanel.add(dual);
+        menuPanel.add(dual);
 
         JCheckBox wallsBox = new JCheckBox("Wall Mechanics");
         wallsBox.setEnabled(wallMechanics);
         wallsBox.setForeground(Color.WHITE);
         wallsBox.setFont(new Font("Calibri", Font.BOLD, 30));
-        drawingPanel.add(wallsBox);
+        menuPanel.add(wallsBox);
 
         JSlider speedSlider = new JSlider(0, 100, 50);
-        drawingPanel.add(speedSlider);
-
-        drawingPanel.validate();
+        menuPanel.add(speedSlider);
 
         classical.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gameState = GameState.CLASSICAL;
-                gameMode = new Classical(drawingPanel);
+                cardLayout.show(mainPanel, "game");
+                gameMode = new Classical(widthPixels, heightPixels);
+                gameMode.setGamePanel(gamePanel);
                 gameMode.runGame();
             }
         });
 
         dual.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gameState = GameState.DUAL;
-                gameMode = new Dual(drawingPanel);
+                cardLayout.show(mainPanel, "game");
+                gameMode = new Dual(widthPixels, heightPixels);
+                gameMode.setGamePanel(gamePanel);
                 gameMode.runGame();
             }
         });
@@ -110,13 +118,9 @@ public class Game {
         return (int)(6250 / (25 + v));
     }
 
-    public static void startGame() {
-        System.out.println("Starting the game");
+    public void startGame() {
         frame.render();
-        System.out.println("frame rendered");
-        doGameMenu();
-        System.out.println("game menu created");
-        drawingPanel.renderObjects();
+        cardLayout.show(mainPanel, "menu");
     }
 
 }

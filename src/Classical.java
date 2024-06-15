@@ -5,15 +5,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 public class Classical extends GameMode {
-
-    private DrawingPanel drawingPanel;
     private Snake snake;
     private JLabel scoreLabel;
 
-    public Classical(DrawingPanel drawingPanel) {
-        super(drawingPanel);
+    public Classical(int widthPixels, int heightPixels) {
+        super(widthPixels, heightPixels);
 
-        this.drawingPanel = drawingPanel;
+        addGameComponents();
     }
 
     public void runGame() {
@@ -22,7 +20,7 @@ public class Classical extends GameMode {
 
         // game loop
         while (!snake.gameHasEnded && !gameIsPaused) {
-            drawingPanel.renderObjects();
+            gamePanel.renderGame();
             snake.doIteration();
 
             // wait deltaTimeMs milliseconds
@@ -64,6 +62,7 @@ public class Classical extends GameMode {
         drawGrid(g2d);
         drawScore(scoreLabel, snake.snakeLength);
         drawPellet(g2d, snake.pelletPosition, "left");
+        drawSnake(g2d, snake, "left");
     }
 
     @Override
@@ -71,18 +70,16 @@ public class Classical extends GameMode {
         JLabel scoreLabel = new JLabel("Snake Game");
         scoreLabel.setForeground(Color.BLACK);
         scoreLabel.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(scoreLabel);
+        gamePanel.add(scoreLabel);
         this.scoreLabel = scoreLabel;
 
-        restartButton = new JButton("Restart");
         restartButton.setForeground(Color.WHITE);
         restartButton.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(restartButton);
+        gamePanel.add(restartButton);
 
-        pauseButton = new JButton("Pause");
         pauseButton.setForeground(Color.WHITE);
         pauseButton.setFont(new Font("Calibri", Font.BOLD, 35));
-        drawingPanel.add(pauseButton);
+        gamePanel.add(pauseButton);
     }
 
     public void drawGrid(Graphics2D g2d) {
@@ -93,7 +90,4 @@ public class Classical extends GameMode {
         g2d.setColor(Color.BLACK);
         g2d.fill(gridRect);
     }
-
-
-
 }
