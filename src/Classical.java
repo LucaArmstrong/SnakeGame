@@ -2,33 +2,35 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 
 public class Classical extends GameMode {
     private Snake snake;
     private JLabel scoreLabel;
-
-    public Classical(int widthPixels, int heightPixels) {
-        super(widthPixels, heightPixels);
-
-        addGameComponents();
+    public Classical(Game game) {
+        super(game);
+        this.snake = new Snake(Game.WIDTH, Game.HEIGHT, wallMechanics);
     }
 
-    public void runGame() {
-        int deltaTimeMs = 100;
-        this.snake = new Snake(WIDTH, HEIGHT);
+    @Override
+    public void gameLoop() {
+        this.snake = new Snake(Game.WIDTH, Game.HEIGHT, wallMechanics);
+        game.gamePanel.repaint();
 
         // game loop
-        while (!snake.gameHasEnded && !gameIsPaused) {
-            gamePanel.renderGame();
-            snake.doIteration();
-
-            // wait deltaTimeMs milliseconds
+        while (!gameHasEnded) {
+            // wait snakeDeltaTimeMs milliseconds
             try {
-                Thread.sleep(deltaTimeMs);
+                Thread.sleep(snakeDeltaTimeMs);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
+
+            if (gameIsPaused) continue;
+
+            game.gamePanel.repaint();
+            snake.doIteration();
+
+            if (snake.gameState == GameState.ENDED) gameHasEnded = true;
         }
     }
 
@@ -54,35 +56,46 @@ public class Classical extends GameMode {
             default -> System.out.println("Invalid key pressed");
         }
 
-        if (!snake.currentDirection.equals("start")) snake.gameHasStarted = true;
+        // set the snake's game state to running if a direction is set initially
+        if (snake.gameState == GameState.NOT_STARTED && !snake.currentDirection.equals("start")) {
+            snake.gameState = GameState.RUNNING;
+            gameIsPaused = false;
+        }
     }
 
     @Override
     public void drawGameMode(Graphics2D g2d) {
         drawGrid(g2d);
-        drawScore(scoreLabel, snake.snakeLength);
+        updateScore(scoreLabel, snake.snakeLength);
         drawPellet(g2d, snake.pelletPosition, "left");
         drawSnake(g2d, snake, "left");
     }
 
     @Override
-    protected void addGameComponents() {
-        JLabel scoreLabel = new JLabel("Snake Game");
+    public void addGameComponents() {
+        JLabel scoreLabel = new JLabel();
         scoreLabel.setForeground(Color.BLACK);
         scoreLabel.setFont(new Font("Calibri", Font.BOLD, 35));
-        gamePanel.add(scoreLabel);
+        game.gamePanel.add(scoreLabel);
         this.scoreLabel = scoreLabel;
 
-        restartButton.setForeground(Color.WHITE);
-        restartButton.setFont(new Font("Calibri", Font.BOLD, 35));
-        gamePanel.add(restartButton);
+        menuButton.setBackground(Color.WHITE);
+        menuButton.setForeground(Color.BLACK);
+        menuButton.setFont(new Font("Calibri", Font.BOLD, 35));
+        game.gamePanel.add(menuButton);
 
-        pauseButton.setForeground(Color.WHITE);
+        restartButton.setBackground(Color.WHITE);
+        restartButton.setForeground(Color.BLACK);
+        restartButton.setFont(new Font("Calibri", Font.BOLD, 35));
+        game.gamePanel.add(restartButton);
+
+        pauseButton.setBackground(Color.WHITE);
+        pauseButton.setForeground(Color.BLACK);
         pauseButton.setFont(new Font("Calibri", Font.BOLD, 35));
-        gamePanel.add(pauseButton);
+        game.gamePanel.add(pauseButton);
     }
 
-    public void drawGrid(Graphics2D g2d) {
+    private void drawGrid(Graphics2D g2d) {
         Rectangle2D.Double gridRect = new Rectangle2D.Double(
                 0, topMargin, gridWidthPixels, gridHeightPixels
         );
